@@ -8,6 +8,7 @@ category:           Algorithms, Graphs
 author:             Matt Morrow
 copyright:          (c) Matt Morrow, 2009
 maintainer:         Andreas Klebinger <klebinger.andreas@gmx.at>
+bug-reports:        https://github.com/AndreasPK/dom-lt/issues
 stability:          stable
 synopsis:           The Lengauer-Tarjan graph dominators algorithm.
 description:
