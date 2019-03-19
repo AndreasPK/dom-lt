@@ -1,4 +1,4 @@
-{-# LANGUAGE RankNTypes, BangPatterns, FlexibleContexts #-}
+{-# LANGUAGE RankNTypes, BangPatterns, FlexibleContexts, Strict #-}
 
 {- |
   Module      :  Data.Graph.Dom
@@ -19,6 +19,12 @@
     \[3\] Brisk, Sarrafzadeh,
       /Interference Graphs for Procedures in Static Single/
       /Information Form are Interval Graphs/, 2007.
+
+ * Strictness
+
+ Unless stated otherwise all exposed functions might fully evaluate their input
+ but are not guaranteed to do so.
+
 -}
 
 module Data.Graph.Dom (
@@ -34,21 +40,24 @@ module Data.Graph.Dom (
   ,parents,ancestors
 ) where
 
+import Data.Monoid(Monoid(..))
+import Data.Bifunctor
+import Data.Tuple (swap)
+
 import Data.Tree
 import Data.List
 import Data.IntMap(IntMap)
 import Data.IntSet(IntSet)
-import qualified Data.IntMap as IM
+import qualified Data.IntMap.Strict as IM
 import qualified Data.IntSet as IS
-import Data.Monoid(Monoid(..))
-import Data.Bifunctor
-import Data.Tuple
+
 import Control.Monad
+import Control.Monad.ST.Strict
+
 import Data.Array.ST
 import Data.Array.Base
   (unsafeNewArray_
   ,unsafeWrite,unsafeRead)
-import Control.Monad.ST.Strict
 
 -----------------------------------------------------------------------------
 
@@ -450,11 +459,13 @@ toEdges = concatMap (uncurry (fmap . (,))) . toAdj
 predG :: Graph -> Graph
 predG g = IM.unionWith IS.union (go g) g0
   where g0 = fmap (const mempty) g
-        go = flip IM.foldrWithKey mempty (\i a m ->
-                foldl' (\m p -> IM.insertWith mappend p
+        f :: IntMap IntSet -> Int -> IntSet -> IntMap IntSet
+        f m i a = foldl' (\m p -> IM.insertWith mappend p
                                       (IS.singleton i) m)
                         m
-                       (IS.toList a))
+                       (IS.toList a)
+        go :: IntMap IntSet -> IntMap IntSet
+        go = flip IM.foldlWithKey' mempty f
 
 pruneReach :: Rooted -> Rooted
 pruneReach (r,g) = (r,g2)
@@ -514,24 +525,28 @@ collectI (<>) f g
 -- (renamed, old -> new)
 renum :: Int -> Graph -> (Graph, NodeMap Node)
 renum from = (\(_,m,g)->(g,m))
-  . IM.foldrWithKey
-      (\i ss (!n,!env,!new)->
-          let (j,n2,env2) = go n env i
-              (n3,env3,ss2) = IS.fold
-                (\k (!n,!env,!new)->
-                    case go n env k of
-                      (l,n2,env2)-> (n2,env2,l `IS.insert` new))
-                (n2,env2,mempty) ss
-              new2 = IM.insertWith IS.union j ss2 new
-          in (n3,env3,new2)) (from,mempty,mempty)
-  where go :: Int
-           -> NodeMap Node
-           -> Node
-           -> (Node,Int,NodeMap Node)
-        go !n !env i =
-          case IM.lookup i env of
-            Just j -> (j,n,env)
-            Nothing -> (n,n+1,IM.insert i n env)
+  . IM.foldlWithKey'
+      f (from,mempty,mempty)
+  where
+    f :: (Int, NodeMap Node, IntMap IntSet) -> Node -> IntSet
+      -> (Int, NodeMap Node, IntMap IntSet)
+    f (!n,!env,!new) i ss =
+            let (j,n2,env2) = go n env i
+                (n3,env3,ss2) = IS.fold
+                  (\k (!n,!env,!new)->
+                      case go n env k of
+                        (l,n2,env2)-> (n2,env2,l `IS.insert` new))
+                  (n2,env2,mempty) ss
+                new2 = IM.insertWith IS.union j ss2 new
+            in (n3,env3,new2)
+    go :: Int
+        -> NodeMap Node
+        -> Node
+        -> (Node,Int,NodeMap Node)
+    go !n !env i =
+        case IM.lookup i env of
+        Just j -> (j,n,env)
+        Nothing -> (n,n+1,IM.insert i n env)
 
 -----------------------------------------------------------------------------
 

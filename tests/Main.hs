@@ -1,6 +1,6 @@
 module Main (main) where
 
-import Data.Graph.Dom
+import Data.Graph.Dom as G
 import Data.Tree
 import System.Exit
 
