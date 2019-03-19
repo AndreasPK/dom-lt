@@ -1,4 +1,4 @@
-Changes in version 0.2
+Changes in version 0.2.0
 
 * Better performance!
 * Major bump because of strictness changes.
