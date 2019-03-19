@@ -4,8 +4,8 @@
   Module      :  Data.Graph.Dom
   Copyright   :  (c) Matt Morrow 2009
   License     :  BSD3
-  Maintainer  :  <morrow@moonpatio.com>
-  Stability   :  experimental
+  Maintainer  :  <klebinger.andreas@gmx.at>
+  Stability   :  stable
   Portability :  portable
 
   The Lengauer-Tarjan graph dominators algorithm.
@@ -36,15 +36,13 @@ module Data.Graph.Dom (
 
 import Data.Tree
 import Data.List
-import Data.Map(Map)
-import qualified Data.Map.Strict as SM
 import Data.IntMap(IntMap)
 import Data.IntSet(IntSet)
-import qualified Data.Map as M
 import qualified Data.IntMap as IM
 import qualified Data.IntSet as IS
 import Data.Monoid(Monoid(..))
-import Control.Applicative
+import Data.Bifunctor
+import Data.Tuple
 import Control.Monad
 import Data.Array.ST
 import Data.Array.Base
@@ -101,7 +99,7 @@ idom rg = runST (evalS idomM =<< initEnv (pruneReach rg))
 -- | /Immediate post-dominators/.
 -- Complexity as for @idom@.
 ipdom :: Rooted -> [(Node,Node)]
-ipdom rg = runST (evalS idomM =<< initEnv (pruneReach (mapsnd predG rg)))
+ipdom rg = runST (evalS idomM =<< initEnv (pruneReach (second predG rg)))
 
 -----------------------------------------------------------------------------
 
@@ -339,7 +337,7 @@ fromEnv :: Dom s [(Node,Node)]
 fromEnv = do
   dom   <- gets domE
   rn    <- gets rnE
-  r     <- gets rootE
+  -- r     <- gets rootE
   (_,n) <- st (getBounds dom)
   forM [1..n] (\i-> do
     j <- st(rn!:i)
@@ -365,8 +363,8 @@ sizeM :: Node -> Dom s Int
 sizeM = fetch sizeE
 sdnoM :: Node -> Dom s Int
 sdnoM = fetch sdnoE
-dfnM :: Node -> Dom s Int
-dfnM = fetch dfnE
+-- dfnM :: Node -> Dom s Int
+-- dfnM = fetch dfnE
 ndfsM :: Int -> Dom s Node
 ndfsM = fetch ndfsE
 childM :: Node -> Dom s Node
@@ -409,28 +407,28 @@ new n = unsafeNewArray_ (0,n-1)
 newI :: Int -> ST s (Arr s Int)
 newI = new
 
-newD :: Int -> ST s (Arr s Double)
-newD = new
+-- newD :: Int -> ST s (Arr s Double)
+-- newD = new
 
-dump :: (MArray (A s) a (ST s)) => Arr s a -> ST s [a]
-dump a = do
-  (m,n) <- getBounds a
-  forM [m..n] (\i -> a!:i)
+-- dump :: (MArray (A s) a (ST s)) => Arr s a -> ST s [a]
+-- dump a = do
+--   (m,n) <- getBounds a
+--   forM [m..n] (\i -> a!:i)
 
 writes :: (MArray (A s) a (ST s))
      => Arr s a -> [(Int,a)] -> ST s ()
 writes a xs = forM_ xs (\(i,x) -> (a.=x) i)
 
-arr :: (MArray (A s) a (ST s)) => [a] -> ST s (Arr s a)
-arr xs = do
-  let n = length xs
-  a <- new n
-  go a n 0 xs
-  return a
-  where go _ _ _    [] = return ()
-        go a n i (x:xs)
-          | i <= n = (a.=x) i >> go a n (i+1) xs
-          | otherwise = return ()
+-- arr :: (MArray (A s) a (ST s)) => [a] -> ST s (Arr s a)
+-- arr xs = do
+--   let n = length xs
+--   a <- new n
+--   go a n 0 xs
+--   return a
+--   where go _ _ _    [] = return ()
+--         go a n i (x:xs)
+--           | i <= n = (a.=x) i >> go a n (i+1) xs
+--           | otherwise = return ()
 
 -----------------------------------------------------------------------------
 
@@ -438,18 +436,18 @@ arr xs = do
 (!) g n = maybe mempty id (IM.lookup n g)
 
 fromAdj :: [(Node, [Node])] -> Graph
-fromAdj = IM.fromList . fmap (mapsnd IS.fromList)
+fromAdj = IM.fromList . fmap (second IS.fromList)
 
 fromEdges :: [Edge] -> Graph
 fromEdges = collectI IS.union fst (IS.singleton . snd)
 
 toAdj :: Graph -> [(Node, [Node])]
-toAdj = fmap (mapsnd IS.toList) . IM.toList
+toAdj = fmap (second IS.toList) . IM.toList
+
+toEdges :: Graph -> [Edge]
 toEdges = concatMap (uncurry (fmap . (,))) . toAdj
 
 predG :: Graph -> Graph
-
-toEdges :: Graph -> [Edge]
 predG g = IM.unionWith IS.union (go g) g0
   where g0 = fmap (const mempty) g
         go = flip IM.foldrWithKey mempty (\i a m ->
@@ -464,7 +462,7 @@ pruneReach (r,g) = (r,g2)
               (maybe mempty id
                 . flip IM.lookup g) $ r
         g2 = IM.fromList
-            . fmap (mapsnd (IS.filter (`IS.member`is)))
+            . fmap (second (IS.filter (`IS.member`is)))
             . filter ((`IS.member`is) . fst)
             . IM.toList $ g
 
@@ -506,21 +504,12 @@ collectI (<>) f g
                                   (f a)
                                   (g a) m) mempty
 
-collect :: (Ord b) => (c -> c -> c)
-        -> (a -> b) -> (a -> c) -> [a] -> Map b c
-collect (<>) f g
-  = foldl' (\m a -> SM.insertWith (<>)
-                                  (f a)
-                                  (g a) m) mempty
-
-swap :: (a,b) -> (b,a)
-swap = uncurry (flip (,))
-
-mapfst :: (a -> c) -> (a,b) -> (c,b)
-mapfst f = \(a,b) -> (f a, b)
-
-mapsnd :: (b -> c) -> (a,b) -> (a,c)
-mapsnd f = \(a,b) -> (a, f b)
+-- collect :: (Ord b) => (c -> c -> c)
+--         -> (a -> b) -> (a -> c) -> [a] -> Map b c
+-- collect (<>) f g
+--   = foldl' (\m a -> SM.insertWith (<>)
+--                                   (f a)
+--                                   (g a) m) mempty
 
 -- (renamed, old -> new)
 renum :: Int -> Graph -> (Graph, NodeMap Node)
@@ -555,20 +544,20 @@ instance Monad (S z s) where
 instance Applicative (S z s) where
   pure = return
   (<*>) = ap
-get :: S z s s
-get = S (\k s -> k s s)
+-- get :: S z s s
+-- get = S (\k s -> k s s)
 gets :: (s -> a) -> S z s a
 gets f = S (\k s -> k (f s) s)
-set :: s -> S z s ()
-set s = S (\k _ -> k () s)
+-- set :: s -> S z s ()
+-- set s = S (\k _ -> k () s)
 modify :: (s -> s) -> S z s ()
 modify f = S (\k -> k () . f)
-runS :: S z s a -> s -> ST z (a, s)
-runS (S g) = g (\a s -> return (a,s))
+-- runS :: S z s a -> s -> ST z (a, s)
+-- runS (S g) = g (\a s -> return (a,s))
 evalS :: S z s a -> s -> ST z a
 evalS (S g) = g ((return .) . const)
-execS :: S z s a -> s -> ST z s
-execS (S g) = g ((return .) . flip const)
+-- execS :: S z s a -> s -> ST z s
+-- execS (S g) = g ((return .) . flip const)
 st :: ST z a -> S z s a
 st m = S (\k s-> do
   a <- m
@@ -586,26 +575,26 @@ fetch f i = do
 
 -----------------------------------------------------------------------------
 
-g0 = fromAdj
-  [(1,[2,3])
-  ,(2,[3])
-  ,(3,[4])
-  ,(4,[3,5,6])
-  ,(5,[7])
-  ,(6,[7])
-  ,(7,[4,8])
-  ,(8,[3,9,10])
-  ,(9,[1])
-  ,(10,[7])]
+-- g0 = fromAdj
+--   [(1,[2,3])
+--   ,(2,[3])
+--   ,(3,[4])
+--   ,(4,[3,5,6])
+--   ,(5,[7])
+--   ,(6,[7])
+--   ,(7,[4,8])
+--   ,(8,[3,9,10])
+--   ,(9,[1])
+--   ,(10,[7])]
 
-g1 = fromAdj
-  [(0,[1])
-  ,(1,[2,3])
-  ,(2,[7])
-  ,(3,[4])
-  ,(4,[5,6])
-  ,(5,[7])
-  ,(6,[4])
-  ,(7,[])]
+-- g1 = fromAdj
+--   [(0,[1])
+--   ,(1,[2,3])
+--   ,(2,[7])
+--   ,(3,[4])
+--   ,(4,[5,6])
+--   ,(5,[7])
+--   ,(6,[4])
+--   ,(7,[])]
 
 -----------------------------------------------------------------------------
