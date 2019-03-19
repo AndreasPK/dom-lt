@@ -10,10 +10,17 @@ copyright:          (c) Matt Morrow, 2009
 maintainer:         Andreas Klebinger <klebinger.andreas@gmx.at>
 stability:          stable
 synopsis:           The Lengauer-Tarjan graph dominators algorithm.
-description:        .
+description:
+    The Lengauer-Tarjan graph dominators algorithm.
+
+    Included are ways to compute domination and post-domination relationships.
 
 Extra-Source-Files:
   Changelog.md
+
+source-repository head
+  type: git
+  location: https://github.com/AndreasPK/dom-lt
 
 library
   Default-Language: Haskell2010
@@ -21,9 +28,9 @@ library
   build-tools:
   extra-libraries:
   hs-source-dirs:   .
-  ghc-options:      -O2 -funbox-strict-fields -Wall -Wno-name-shadowing
+  ghc-options:      -O2 -funbox-strict-fields
   default-extensions: RankNTypes
-  build-depends:    base>=4.9, array, containers >= 0.5
+  build-depends:    base >= 4.9 && < 5, array, containers >= 0.5
   exposed-modules:  Data.Graph.Dom
 
 test-suite dom-lt-tests
@@ -36,7 +43,7 @@ test-suite dom-lt-tests
   Build-Depends: base, dom-lt, containers
 
   default-extensions:
-  Ghc-Options: -O2 -Wall
+  Ghc-Options: -Wall
 
 benchmark dom-lt-bench
   Default-Language: Haskell2010
@@ -48,5 +55,5 @@ benchmark dom-lt-bench
   Build-Depends: base, dom-lt, containers, criterion >= 1.4, deepseq
   default-extensions:
 
-  Ghc-Options: -O2 -Wall -fno-full-laziness
+  Ghc-Options: -O2 -fno-full-laziness
 
