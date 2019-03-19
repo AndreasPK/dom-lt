@@ -1,4 +1,4 @@
-Changes in version 0.1.4
+Changes in version 0.2.0
 
 * Requires GHC >= 8.0 to build (base dependency)
 * Requires containers >= 0.5
