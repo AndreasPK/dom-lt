@@ -1,4 +1,8 @@
-Changes in version 0.2.0
+## Changes in version 0.2.1
+
+* Fixed a bug that resulted in incorrect results.
+
+## Changes in version 0.2.0
 
 * Better performance!
 * Major bump because of strictness changes.

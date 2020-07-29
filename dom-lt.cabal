@@ -31,7 +31,10 @@ library
   hs-source-dirs:   .
   ghc-options:      -O2 -funbox-strict-fields
   default-extensions: RankNTypes
-  build-depends:    base >= 4.9 && < 5, array, containers >= 0.5
+  build-depends:
+      base >= 4.9 && < 5
+    , array
+    , containers >= 0.5 && < 0.7
   exposed-modules:  Data.Graph.Dom
 
 test-suite dom-lt-tests
@@ -45,7 +48,6 @@ test-suite dom-lt-tests
       base                        >=4.6   && <5
     , dom-lt
     , containers
-    , deepseq                     >=1.2   && <1.5
     , HUnit                       >=1.3   && <1.7
 
   default-extensions:
