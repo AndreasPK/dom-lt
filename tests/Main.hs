@@ -6,8 +6,6 @@ import Data.Graph.Dom as G
 import Data.Tree
 import System.Exit
 
-import Data.List (nub, nubBy)
-import Data.Containers.ListUtils
 import Test.HUnit hiding (Node,Path)
 -- import Test.Framework.Providers.QuickCheck2
 -- import Test.QuickCheck (Property, (===))
