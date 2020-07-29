@@ -1,4 +1,4 @@
 .ghc.environment*
 dist-newstyle
 .vscode
-
+tags
