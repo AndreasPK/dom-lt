@@ -1,5 +1,10 @@
 ## Changes in version 0.2.1
 
+* Fixed #2. Another bug that resulted in incorrect results
+  for some inputs.
+
+## Changes in version 0.2.1
+
 * Fixed a bug that resulted in incorrect results.
 
 ## Changes in version 0.2.0
