@@ -7,18 +7,16 @@ import Data.List
 import Data.IntMap.Strict as IM
 import Data.IntSet as IS
 
-(<+>) :: [Char] -> [Char] -> [Char]
-x <+> y = x <> " " <> y
 newline :: [Char]
 newline = "\n"
 
--- For debugging only
+-- | For debugging only
 asDotFile :: D.Graph -> String
 asDotFile g =
     let pprNode :: (Int, IntSet) -> String
         pprNode (node,targets) =
             concat $ intersperse newline $ fmap (pprEdge node) $ IS.toList targets
-        pprEdge v u = show v <> " -> " <> show u <> ";"
-    in "digraph G {" <> newline <>
-            (concat $ intersperse newline $ fmap pprNode (IM.toList g)) <> newline <>
+        pprEdge v u = show v ++ " -> " ++ show u ++ ";"
+    in "digraph G {" ++ newline ++
+            (concat $ intersperse newline $ fmap pprNode (IM.toList g)) ++ newline ++
             "}"
