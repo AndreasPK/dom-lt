@@ -36,7 +36,9 @@ library
       base >= 4.9 && < 5
     , array
     , containers >= 0.5 && < 0.7
-  exposed-modules:  Data.Graph.Dom
+  exposed-modules:
+    Data.Graph.Dom,
+    Data.Graph.Dom.Internal
 
 test-suite dom-lt-tests
   Default-Language: Haskell2010

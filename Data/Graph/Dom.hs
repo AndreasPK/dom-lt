@@ -151,9 +151,9 @@ idomM = do
   n <- gets dfsE
   forM_ [n,n-1..1] (\i-> do
     w <- ndfsM i
-    sw <- sdnoM w
     ps <- predsM w
     forM_ ps (\v-> do
+      sw <- sdnoM w
       u <- eval v
       su <- sdnoM u
       when (su < sw)
@@ -290,9 +290,10 @@ dfsDom i = do
 
 initEnv :: Rooted -> ST s (Env s)
 initEnv (r0,g0) = do
+  -- Graph renumbered to indices from 1 to |V|
   let (g,rnmap) = renum 1 g0
-      pred      = predG g
-      r         = rnmap IM.! r0
+      pred      = predG g -- reverse graph
+      root      = rnmap IM.! r0 -- renamed root
       n         = IM.size g
       ns        = [0..n]
       m         = n+1
@@ -314,13 +315,14 @@ initEnv (r0,g0) = do
   ndfs      <- newI m
   dfn       <- newI m
 
+  -- Initialize all arrays
   forM_ [0..n] (doms.=0)
   forM_ [0..n] (sdno.=0)
   forM_ [1..n] (size.=1)
   forM_ [0..n] (ancestor.=0)
   forM_ [0..n] (child.=0)
 
-  (doms.=r) r
+  (doms.=root) root
   (size.=0) 0
   (label.=0) 0
 
@@ -328,7 +330,7 @@ initEnv (r0,g0) = do
     {rnE        = rna
     ,dfsE       = 0
     ,zeroE      = 0
-    ,rootE      = r
+    ,rootE      = root
     ,labelE     = label
     ,parentE    = parent
     ,ancestorE  = ancestor
@@ -399,6 +401,7 @@ type Arr s a = A s Int a
 infixl 9 !:
 infixr 2 .=
 
+-- | arr .= x idx => write x to index
 (.=) :: (MArray (A s) a (ST s))
      => Arr s a -> a -> Int -> ST s ()
 (v .= x) i = unsafeWrite v i x
@@ -531,6 +534,10 @@ collectI (<>) f g
 --                                   (f a)
 --                                   (g a) m) mempty
 
+-- | renum n g: Rename all nodes
+--
+-- Gives nodes sequential names starting at n.
+-- Returns the new graph and a mapping.
 -- (renamed, old -> new)
 renum :: Int -> Graph -> (Graph, NodeMap Node)
 renum from = (\(_,m,g)->(g,m))
@@ -555,6 +562,7 @@ renum from = (\(_,m,g)->(g,m))
 
 -----------------------------------------------------------------------------
 
+-- Nothing better than reinvinting the state monad.
 newtype S z s a = S {unS :: forall o. (a -> s -> ST z o) -> s -> ST z o}
 instance Functor (S z s) where
   fmap f (S g) = S (\k -> g (k . f))
