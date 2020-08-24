@@ -2,7 +2,6 @@ name:               dom-lt
 version:            0.2.2
 cabal-version:      >= 1.10
 build-type:         Simple
-tested-with:        GHC == 8.10.1 || == 8.8.4 || == 8.0.1
 license:            BSD3
 license-file:       LICENSE
 category:           Algorithms, Graphs
@@ -16,6 +15,11 @@ description:
     The Lengauer-Tarjan graph dominators algorithm.
 
     Included are ways to compute domination and post-domination relationships.
+
+tested-with:
+  GHC == 8.10.1 || == 8.10.2,
+  GHC == 8.8.4  || == 8.8.3,
+  GHC == 8.0.1
 
 Extra-Source-Files:
   Changelog.md

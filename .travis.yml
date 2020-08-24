@@ -36,6 +36,9 @@ jobs:
     - compiler: ghc-8.10.1
       addons: {"apt":{"sources":[{"sourceline":"deb http://ppa.launchpad.net/hvr/ghc/ubuntu xenial main","key_url":"https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x063dab2bdc0b3f9fcebc378bff3aeacef6f88286"}],"packages":["ghc-8.10.1","cabal-install-3.2"]}}
       os: linux
+    - compiler: ghc-8.8.3
+      addons: {"apt":{"sources":[{"sourceline":"deb http://ppa.launchpad.net/hvr/ghc/ubuntu xenial main","key_url":"https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x063dab2bdc0b3f9fcebc378bff3aeacef6f88286"}],"packages":["ghc-8.8.3","cabal-install-3.2"]}}
+      os: linux
     - compiler: ghc-8.0.1
       addons: {"apt":{"sources":[{"sourceline":"deb http://ppa.launchpad.net/hvr/ghc/ubuntu xenial main","key_url":"https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x063dab2bdc0b3f9fcebc378bff3aeacef6f88286"}],"packages":["ghc-8.0.1","cabal-install-3.2"]}}
       os: linux
@@ -87,8 +90,8 @@ install:
   - touch cabal.project
   - |
     echo "packages: ." >> cabal.project
-  - if [ $HCNUMVER -ge 81000 ] ; then echo 'package dom-lt' >> cabal.project ; fi
-  - "if [ $HCNUMVER -ge 81000 ] ; then echo '  ghc-options: -Werror=missing-methods' >> cabal.project ; fi"
+  - if [ $HCNUMVER -ge 80800 ] ; then echo 'package dom-lt' >> cabal.project ; fi
+  - "if [ $HCNUMVER -ge 80800 ] ; then echo '  ghc-options: -Werror=missing-methods' >> cabal.project ; fi"
   - |
   - "for pkg in $($HCPKG list --simple-output); do echo $pkg | sed 's/-[^-]*$//' | (grep -vE -- '^(dom-lt)$' || true) | sed 's/^/constraints: /' | sed 's/$/ installed/' >> cabal.project.local; done"
   - cat cabal.project || true
@@ -114,8 +117,8 @@ script:
   - touch cabal.project
   - |
     echo "packages: ${PKGDIR_dom_lt}" >> cabal.project
-  - if [ $HCNUMVER -ge 81000 ] ; then echo 'package dom-lt' >> cabal.project ; fi
-  - "if [ $HCNUMVER -ge 81000 ] ; then echo '  ghc-options: -Werror=missing-methods' >> cabal.project ; fi"
+  - if [ $HCNUMVER -ge 80800 ] ; then echo 'package dom-lt' >> cabal.project ; fi
+  - "if [ $HCNUMVER -ge 80800 ] ; then echo '  ghc-options: -Werror=missing-methods' >> cabal.project ; fi"
   - |
   - "for pkg in $($HCPKG list --simple-output); do echo $pkg | sed 's/-[^-]*$//' | (grep -vE -- '^(dom-lt)$' || true) | sed 's/^/constraints: /' | sed 's/$/ installed/' >> cabal.project.local; done"
   - cat cabal.project || true
