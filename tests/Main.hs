@@ -7,19 +7,6 @@ import Data.Tree
 import System.Exit
 
 import Test.HUnit hiding (Node,Path)
--- import Test.Framework.Providers.QuickCheck2
--- import Test.QuickCheck (Property, (===))
--- import Test.QuickCheck.Function (Fun, apply)
--- import Test.QuickCheck.Poly (A, OrdA, B, OrdB, C)
-
--- main = defaultMain
---   [ test_dom
---   , testtest_pdom
---   , test_idom
---   , test_ipdom
---   , test_domTree
---   , test_pdomTree
---   ]
 
 g0 :: Graph
 g0 = fromAdj
@@ -46,13 +33,18 @@ g1 = fromAdj
   ,(7,[])]
 
 main = do
-  counts <- runTestTT tests
-  putStrLn $ showCounts counts
-  if (errors counts + failures counts) > 0
+  result_counts <- runTestTT tests
+  putStrLn $ showCounts result_counts
+  if (errors result_counts + failures result_counts) > 0
     then exitWith $ ExitFailure 1
     else exitWith   ExitSuccess
 
-tests = TestList $ map TestCase [dom0, dom1, pdom0, pdom1, ipdom0, ipdom1, dom_t_g0, dom_t_g1, dom_pt_g0, dom_pt_g1]
+tests :: Test
+tests =
+  TestList $
+    map TestCase
+      [dom0, dom1, pdom0, pdom1, ipdom0, ipdom1, dom_t_g0, dom_t_g1, dom_pt_g0, dom_pt_g1,
+       dom_T2_g3]
 
 g0_rooted, g1_rooted :: Rooted
 g0_rooted = (1,g0)
@@ -98,7 +90,15 @@ dom_pt_g1 = assertEqual "pdomTree g1"
               (  Node {rootLabel = 0, subForest = []}  )
               (pdomTree g1_rooted)
 
+g3_edges :: Graph
+g3_edges = fromAdj [(0,[3,6]), (3,[8,9]), (6,[99]), (8,[11]), (9,[16]), (11,[99]), (12,[99]), (13,[99]), (16,[12,13]), (99,[])]
+g3 :: (Int, Graph)
+g3 = (0 :: Int, g3_edges)
 
+dom_T2_g3 :: Assertion
+dom_T2_g3 = assertEqual "dom #2"
+              [(99,[0])]
+              ( filter (\x -> fst x == 99) $ dom g3)
 
 
 -- applyDomFunctions :: Rooted
