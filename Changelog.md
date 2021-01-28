@@ -1,4 +1,8 @@
-## Changes in version 0.2.1
+## Changes in version 0.2.2.1
+
+Adjust codebase for ! parsing changes.
+
+## Changes in version 0.2.2
 
 * Fixed #2. Another bug that resulted in incorrect results
   for some inputs.
