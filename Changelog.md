@@ -1,6 +1,10 @@
+## Changes in version 0.2.3
+
+- Support GHC 7.0 by conditionally removing the `Strict` flag.
+
 ## Changes in version 0.2.2.1
 
-Adjust codebase for ! parsing changes.
+- Adjust codebase for ! parsing changes.
 
 ## Changes in version 0.2.2
 
