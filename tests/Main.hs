@@ -1,4 +1,8 @@
+{-# LANGUAGE CPP #-}
+
+#if __GLASGOW_HASKELL__ >= 800
 {-# OPTIONS_GHC -Wno-missing-signatures #-}
+#endif
 
 module Main (main) where
 

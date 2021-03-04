@@ -1,4 +1,9 @@
-{-# LANGUAGE RankNTypes, BangPatterns, FlexibleContexts, Strict #-}
+{-# LANGUAGE CPP #-}
+{-# LANGUAGE RankNTypes, BangPatterns, FlexibleContexts #-}
+
+#if __GLASGOW_HASKELL__ >= 800
+{-# LANGUAGE Strict #-}
+#endif
 
 {- |
   Module      :  Data.Graph.Dom
@@ -600,29 +605,3 @@ fetch :: (MArray (A z) a (ST z))
 fetch f i = do
   a <- gets f
   st (a!:i)
-
------------------------------------------------------------------------------
-
--- g0 = fromAdj
---   [(1,[2,3])
---   ,(2,[3])
---   ,(3,[4])
---   ,(4,[3,5,6])
---   ,(5,[7])
---   ,(6,[7])
---   ,(7,[4,8])
---   ,(8,[3,9,10])
---   ,(9,[1])
---   ,(10,[7])]
-
--- g1 = fromAdj
---   [(0,[1])
---   ,(1,[2,3])
---   ,(2,[7])
---   ,(3,[4])
---   ,(4,[5,6])
---   ,(5,[7])
---   ,(6,[4])
---   ,(7,[])]
-
------------------------------------------------------------------------------
