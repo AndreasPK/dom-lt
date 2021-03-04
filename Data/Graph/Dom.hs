@@ -46,7 +46,6 @@ module Data.Graph.Dom (
 ) where
 
 import Data.Monoid(Monoid(..))
-import Data.Bifunctor
 import Data.Tuple (swap)
 
 import Data.Tree
@@ -605,3 +604,7 @@ fetch :: (MArray (A z) a (ST z))
 fetch f i = do
   a <- gets f
   st (a!:i)
+
+-- Redefine Data.Bifunctor.second for GHC 7 compatibility
+second :: (b -> c) -> (a, b) -> (a, c)
+second f (a, b) = (a, f b)
