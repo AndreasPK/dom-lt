@@ -473,7 +473,7 @@ toEdges = concatMap (uncurry (fmap . (,))) . toAdj
 predG :: Graph -> Graph
 predG g = IM.unionWith IS.union (go g) g0
   where g0 = fmap (const mempty) g
-        go = flip foldrWithKey mempty (\i a m ->
+        go = flip IM.foldrWithKey mempty (\i a m ->
                 foldl' (\m p -> IM.insertWith mappend p
                                       (IS.singleton i) m)
                         m
@@ -552,7 +552,7 @@ collectI (<>) f g
 -- (renamed, old -> new)
 renum :: Int -> Graph -> (Graph, NodeMap Node)
 renum from = (\(_,m,g)->(g,m))
-  . foldrWithKey
+  . IM.foldrWithKey
       (\i ss (!n,!env,!new)->
           let (j,n2,env2) = go n env i
               (n3,env3,ss2) = IS.fold
@@ -615,9 +615,3 @@ fetch f i = do
 -- Redefine Data.Bifunctor.second for GHC 7 compatibility
 second :: (b -> c) -> (a, b) -> (a, c)
 second f (a, b) = (a, f b)
-
-#if __GLASGOW_HASKELL__ >= 704
-foldrWithKey = IM.foldrWithKey
-#else
-foldrWithKey f z = foldr (uncurry f) z . IM.toAscList
-#endif
