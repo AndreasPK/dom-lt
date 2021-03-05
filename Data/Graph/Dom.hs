@@ -52,11 +52,18 @@ import Data.Tree
 import Data.List
 import Data.IntMap(IntMap)
 import Data.IntSet(IntSet)
-import qualified Data.IntMap.Strict as IM
 import qualified Data.IntSet as IS
 
+import Control.Applicative
 import Control.Monad
+
+#if __GLASGOW_HASKELL__ >= 800
+import qualified Data.IntMap.Strict as IM
 import Control.Monad.ST.Strict
+#else
+import qualified Data.IntMap as IM
+import Control.Monad.ST
+#endif
 
 import Data.Array.ST
 import Data.Array.Base

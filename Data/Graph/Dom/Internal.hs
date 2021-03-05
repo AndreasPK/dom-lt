@@ -1,10 +1,17 @@
+{-# LANGUAGE CPP #-}
+
 module Data.Graph.Dom.Internal where
 
 import Data.Graph.Dom as D
 
+#if __GLASGOW_HASKELL__ >= 800
+import Data.IntMap.Strict as IM
+#else
+import Data.IntMap as IM
+#endif
+
 import Data.Foldable as F
 import Data.List
-import Data.IntMap.Strict as IM
 import Data.IntSet as IS
 
 newline :: [Char]
