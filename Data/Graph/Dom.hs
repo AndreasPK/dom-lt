@@ -57,7 +57,7 @@ import qualified Data.IntSet as IS
 import Control.Applicative
 import Control.Monad
 
-#if __GLASGOW_HASKELL__ >= 800
+#if MIN_VERSION_containers(0, 5, 0)
 import qualified Data.IntMap.Strict as IM
 import Control.Monad.ST.Strict
 #else

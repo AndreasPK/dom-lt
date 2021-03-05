@@ -38,7 +38,7 @@ library
   build-depends:
       base >= 4.3 && < 5
     , array
-    , containers
+    , containers >= 0.4.2.0 && < 0.7
   exposed-modules:
     Data.Graph.Dom,
     Data.Graph.Dom.Internal

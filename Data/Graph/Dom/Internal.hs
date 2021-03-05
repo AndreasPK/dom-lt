@@ -4,7 +4,7 @@ module Data.Graph.Dom.Internal where
 
 import Data.Graph.Dom as D
 
-#if __GLASGOW_HASKELL__ >= 800
+#if MIN_VERSION_containers(0, 5, 0)
 import Data.IntMap.Strict as IM
 #else
 import Data.IntMap as IM
