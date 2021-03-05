@@ -22,8 +22,8 @@ asDotFile :: D.Graph -> String
 asDotFile g =
     let pprNode :: (Int, IntSet) -> String
         pprNode (node,targets) =
-            concat $ intersperse newline $ fmap (pprEdge node) $ IS.toList targets
+            F.concat $ intersperse newline $ fmap (pprEdge node) $ IS.toList targets
         pprEdge v u = show v ++ " -> " ++ show u ++ ";"
     in "digraph G {" ++ newline ++
-            (concat $ intersperse newline $ fmap pprNode (IM.toList g)) ++ newline ++
+            (F.concat $ intersperse newline $ fmap pprNode (IM.toList g)) ++ newline ++
             "}"
