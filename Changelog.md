@@ -1,6 +1,10 @@
+## Changes in version 0.2.3
+
+- Support GHC >= 7.4 by conditionally removing  strictness features (the `Strict` flag and strict `IntMap`s) for GHC versions < 8.
+
 ## Changes in version 0.2.2.1
 
-Adjust codebase for ! parsing changes.
+- Adjust codebase for ! parsing changes.
 
 ## Changes in version 0.2.2
 

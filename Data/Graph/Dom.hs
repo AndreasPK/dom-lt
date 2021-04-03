@@ -1,4 +1,9 @@
-{-# LANGUAGE RankNTypes, BangPatterns, FlexibleContexts, Strict #-}
+{-# LANGUAGE CPP #-}
+{-# LANGUAGE RankNTypes, BangPatterns, FlexibleContexts #-}
+
+#if __GLASGOW_HASKELL__ >= 800
+{-# LANGUAGE Strict #-}
+#endif
 
 {- |
   Module      :  Data.Graph.Dom
@@ -41,18 +46,24 @@ module Data.Graph.Dom (
 ) where
 
 import Data.Monoid(Monoid(..))
-import Data.Bifunctor
 import Data.Tuple (swap)
 
 import Data.Tree
 import Data.List
 import Data.IntMap(IntMap)
 import Data.IntSet(IntSet)
-import qualified Data.IntMap.Strict as IM
 import qualified Data.IntSet as IS
 
+import Control.Applicative
 import Control.Monad
+
+#if MIN_VERSION_containers(0, 5, 0)
+import qualified Data.IntMap.Strict as IM
 import Control.Monad.ST.Strict
+#else
+import qualified Data.IntMap as IM
+import Control.Monad.ST
+#endif
 
 import Data.Array.ST
 import Data.Array.Base
@@ -601,28 +612,6 @@ fetch f i = do
   a <- gets f
   st (a!:i)
 
------------------------------------------------------------------------------
-
--- g0 = fromAdj
---   [(1,[2,3])
---   ,(2,[3])
---   ,(3,[4])
---   ,(4,[3,5,6])
---   ,(5,[7])
---   ,(6,[7])
---   ,(7,[4,8])
---   ,(8,[3,9,10])
---   ,(9,[1])
---   ,(10,[7])]
-
--- g1 = fromAdj
---   [(0,[1])
---   ,(1,[2,3])
---   ,(2,[7])
---   ,(3,[4])
---   ,(4,[5,6])
---   ,(5,[7])
---   ,(6,[4])
---   ,(7,[])]
-
------------------------------------------------------------------------------
+-- Redefine Data.Bifunctor.second for GHC 7 compatibility
+second :: (b -> c) -> (a, b) -> (a, c)
+second f (a, b) = (a, f b)
