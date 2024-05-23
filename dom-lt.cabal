@@ -33,12 +33,19 @@ library
   build-tools:
   extra-libraries:
   hs-source-dirs:   .
-  ghc-options:      -O2 -funbox-strict-fields
+
+  ghc-options:
+      -O2 -funbox-strict-fields
+
+  if impl(ghc >= 9.4)
+    -- Improves perf by 5-9% on my box
+    ghc-options: -fworker-wrapper-cbv
+
   default-extensions: RankNTypes
   build-depends:
       base >= 4.3 && < 5
     , array
-    , containers >= 0.4.2.0 && < 0.7
+    , containers >= 0.7 && < 0.8
   exposed-modules:
     Data.Graph.Dom,
     Data.Graph.Dom.Internal
@@ -66,8 +73,13 @@ benchmark dom-lt-bench
   Main-Is:  Main.hs
   hs-source-dirs: benchmarks
 
-  Build-Depends: base, dom-lt, containers, criterion, deepseq
+  Build-Depends:
+      base,
+      dom-lt,
+      containers,
+      -- Technically older still works but we want the µ bugfix
+      criterion >= 1.5.3.0,
+      deepseq
   default-extensions:
 
   Ghc-Options: -O2 -fno-full-laziness
-
