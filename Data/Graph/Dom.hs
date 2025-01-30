@@ -70,6 +70,8 @@ import Data.Array.Base
   (unsafeNewArray_
   ,unsafeWrite,unsafeRead)
 
+import Data.Maybe
+
 -----------------------------------------------------------------------------
 
 type Node       = Int
@@ -493,12 +495,10 @@ predG g = IM.unionWith IS.union (go g) g0
 pruneReach :: Rooted -> Rooted
 pruneReach (r,g) = (r,g2)
   where is = reachable
-              (maybe mempty id
+              (fromMaybe mempty
                 . flip IM.lookup g) $ r
-        g2 = IM.fromList
-            . fmap (second (IS.filter (`IS.member`is)))
-            . filter ((`IS.member`is) . fst)
-            . IM.toList $ g
+        g2 = IM.map (\targets -> IS.filter (`IS.member`is) targets)
+            . IM.filterWithKey (\node _targets -> IS.member node is) $ g
 
 tip :: Tree a -> (a, [Tree a])
 tip (Node a ts) = (a, ts)
