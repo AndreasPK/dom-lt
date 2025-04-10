@@ -46,7 +46,7 @@ library
       -- base version for ghc-7.10.3
       base >= 4.8.2 && < 5
     , array
-    , containers >= 0.6 && < 0.9
+    , containers >= 0.5 && < 0.9
   exposed-modules:
     Data.Graph.Dom,
     Data.Graph.Dom.Internal
