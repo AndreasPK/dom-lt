@@ -58,6 +58,11 @@ jobs:
             compilerVersion: 8.10.3
             setup-method: ghcup
             allow-failure: false
+          - compiler: ghc-8.0.2
+            compilerKind: ghc
+            compilerVersion: 8.0.2
+            setup-method: ghcup
+            allow-failure: false
       fail-fast: false
     steps:
       - name: apt-get install
@@ -172,8 +177,8 @@ jobs:
           touch cabal.project
           touch cabal.project.local
           echo "packages: ${PKGDIR_dom_lt}" >> cabal.project
-          echo "package dom-lt" >> cabal.project
-          echo "    ghc-options: -Werror=missing-methods" >> cabal.project
+          if [ $((HCNUMVER >= 81000)) -ne 0 ] ; then echo "package dom-lt" >> cabal.project ; fi
+          if [ $((HCNUMVER >= 81000)) -ne 0 ] ; then echo "    ghc-options: -Werror=missing-methods" >> cabal.project ; fi
           cat >> cabal.project <<EOF
           EOF
           $HCPKG list --simple-output --names-only | perl -ne 'for (split /\s+/) { print "constraints: any.$_ installed\n" unless /^(dom-lt)$/; }' >> cabal.project.local

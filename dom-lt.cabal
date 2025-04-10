@@ -18,7 +18,7 @@ description:
 
 tested-with:
   --
-  GHC == 9.12.2 || == 9.10.1 || == 9.8.4 || == 9.6.7 || == 9.4.8 || == 8.10.3 || == 7.10.3
+  GHC == 9.12.2 || == 9.10.1 || == 9.8.4 || == 9.6.7 || == 9.4.8 || == 8.10.3 || == 8.0.2
 
 Extra-Source-Files:
   Changelog.md
@@ -43,7 +43,7 @@ library
 
   default-extensions: RankNTypes
   build-depends:
-      -- ghc-7.10.3
+      -- base version for ghc-7.10.3
       base >= 4.8.2 && < 5
     , array
     , containers >= 0.6 && < 0.9
