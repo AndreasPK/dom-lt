@@ -17,8 +17,8 @@ description:
     Included are ways to compute domination and post-domination relationships.
 
 tested-with:
-  -- Every two major versions between 7 and 9 should be enough
-  GHC == 9.0.1 || == 8.10.3 || == 8.8.4 || == 8.4.4 || == 8.0.2 || == 7.8.4 || == 7.4.2
+  --
+  GHC == 9.12.2 || == 9.10.1 || == 9.8.4 || == 9.6.7 || == 9.4.8 || == 8.10.3 || == 7.4.2
 
 Extra-Source-Files:
   Changelog.md
