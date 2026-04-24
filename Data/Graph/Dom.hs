@@ -555,7 +555,7 @@ renum from = (\(_,m,g)->(g,m))
   . IM.foldrWithKey
       (\i ss (!n,!env,!new)->
           let (j,n2,env2) = go n env i
-              (n3,env3,ss2) = IS.fold
+              (n3,env3,ss2) = IS.foldr
                 (\k (!n,!env,!new)->
                     case go n env k of
                       (l,n2,env2)-> (n2,env2,l `IS.insert` new))
