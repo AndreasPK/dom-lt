@@ -18,7 +18,7 @@ description:
 
 tested-with:
   --
-  GHC == 9.12.2 || == 9.10.1 || == 9.8.4 || == 9.6.7 || == 9.4.8 || == 8.10.3 || == 8.0.2
+  GHC == 9.14.1 || == 9.12.2 || == 9.10.1 || == 9.8.4 || == 9.6.7 || == 9.4.8 || == 8.10.3
 
 Extra-Source-Files:
   Changelog.md
@@ -77,7 +77,6 @@ benchmark dom-lt-bench
   Build-Depends:
       base,
       dom-lt,
-      containers,
       -- Technically older still works but we want the µ bugfix
       criterion >= 1.5.3.0,
       deepseq
