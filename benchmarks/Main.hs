@@ -32,9 +32,12 @@ g1 = (0,
         ,(7,[])]
     )
 
+star :: Int -> Rooted
+star n = (0, fromAdj $ (0, [1..n-1]) : [(i, []) | i <- [1..n-1]])
+
 -- Our benchmark harness.
 main :: IO ()
-main = g0 `deepseq` g1 `deepseq`
+main = g0 `deepseq` g1 `deepseq` star 20000 `deepseq`
     defaultMain [
         bgroup "g0" [ bench "dom"       $ nf dom g0
                     , bench "pdom"      $ nf pdom g0
@@ -49,5 +52,8 @@ main = g0 `deepseq` g1 `deepseq`
                     , bench "ipdom"     $ nf ipdom g1
                     , bench "domTree"   $ nf domTree g1
                     , bench "pdomTree"  $ nf pdomTree g1
+            ],
+        bgroup "star-20000" [ bench "idom" $ nf idom (star 20000)
+                            , bench "dom"  $ nf dom (star 20000)
             ]
         ]
