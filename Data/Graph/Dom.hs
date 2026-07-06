@@ -178,6 +178,7 @@ idomM = do
     pw <- parentM w
     link pw w
     bps <- bucketM pw
+    modify(\e->e{bucketE=IM.insert pw mempty (bucketE e)})
     forM_ bps (\v-> do
       u <- eval v
       su <- sdnoM u
