@@ -178,7 +178,10 @@ idomM = do
     pw <- parentM w
     link pw w
     bps <- bucketM pw
-    modify(\e->e{bucketE=IM.insert pw mempty (bucketE e)})
+    -- leave keys in place, only dropping values to allow
+    -- future map adjustments with `adjust`.
+    modify(\e->e{bucketE=IM.insert pw IS.empty (bucketE e)})
+
     forM_ bps (\v-> do
       u <- eval v
       su <- sdnoM u
