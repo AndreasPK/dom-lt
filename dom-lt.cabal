@@ -72,11 +72,17 @@ benchmark dom-lt-bench
   type: exitcode-stdio-1.0
 
   Main-Is:  Main.hs
+  Other-Modules: Loader
   hs-source-dirs: benchmarks
 
   Build-Depends:
       base,
       dom-lt,
+      array,
+      bytestring,
+      zlib >= 0.6 && < 0.8,
+      containers,
+      ghc-compact,
       -- Technically older still works but we want the µ bugfix
       criterion >= 1.5.3.0,
       deepseq
