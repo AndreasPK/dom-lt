@@ -69,8 +69,8 @@ splitGroups region ls = do
 -- also for the ones without successors.
 parseLine :: BL.ByteString -> (Int, Rooted)
 parseLine l = case map int (BL.words l) of
-  !count : !n : es -> (count, (1, fromEdges (pairs es) `IM.union` noSuccs n))
-  _              -> bad
+  (!count) : (!n) : es -> (count, (1, fromEdges (pairs es) `IM.union` noSuccs n))
+  _                    -> bad
   where
     int w = maybe bad fst (BL.readInt w)
     -- Graph of nodes without edges
